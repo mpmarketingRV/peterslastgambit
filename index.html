@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Peter's Last Gambit</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #0d0d0d;
+      color: #e6e6e6;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    h1, h2, h3 {
+      color: #f2f2f2;
+    }
+
+    button {
+      background-color: #222;
+      border: 1px solid #444;
+      padding: 0.75rem 1.2rem;
+      border-radius: 6px;
+      color: #e6e6e6;
+      cursor: pointer;
+      margin: 0.5rem;
+      width: 80%;
+      max-width: 280px;
+    }
+    button:hover {
+      background-color: #333;
+    }
+
+    .choice-box {
+      margin-top: 2rem;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem;
+      margin-top: 3rem;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>PETER'S LAST GAMBIT</h1>
+    <div id="game"></div>
+  </div>
+
+  <footer>© 2025 Peter's Last Gambit</footer>
+
+  <script>
+    const game = document.getElementById('game');
+
+    // Game state
+    const state = {
+      character: null,
+      billyFound: Math.random() < 0.33, // 33% chance
+      wilburJoined: false,
+      encounters: 0,
+      nedHelp: 0,
+    };
+
+    function startMenu() {
+      game.innerHTML = `
+        <h2>Select Your Character</h2>
+        <button onclick="chooseCharacter('Peter')">Peter</button>
+        <button onclick="chooseCharacter('Mupp')">Mupp</button>
+        <button onclick="chooseCharacter('Sanders')">Sanders</button>
+      `;
+    }
+
+    function chooseCharacter(c) {
+      state.character = c;
+      introScene();
+    }
+
+    function introScene() {
+      game.innerHTML = `
+        <h2>Welcome, ${state.character}</h2>
+        <p>You enter the outskirts of Hogshire, a land oppressed by the tyrant Chubb the Pig. Whispers of his riches and cruelty echo everywhere.</p>
+        <div class="choice-box">
+          <button onclick="pathForest()">Head Into the Dark Forest</button>
+          <button onclick="pathVillage()">Visit the Abandoned Village</button>
+        </div>
+      `;
+    }
+
+    function pathForest() {
+      state.encounters++;
+      let billy = state.billyFound ? "You discover Billy the Bulldog hiding behind a stump. He agrees to join you, boosting your odds of reaching the Big Pig Bank." : "The forest feels empty, but dangerous.";
+
+      game.innerHTML = `
+        <h2>The Dark Forest</h2>
+        <p>${billy}</p>
+        <p>A shadow emerges — it's Ned Flanders, weary but kind.</p>
+        <button onclick="nedEncounter()">Talk to Ned Flanders</button>
+        <button onclick="minionFight()">Ignore Him and Push Ahead</button>
+      `;
+    }
+
+    function pathVillage() {
+      state.encounters++;
+      game.innerHTML = `
+        <h2>The Abandoned Village</h2>
+        <p>You find signs of struggle. Chubb's Minions attacked recently. You hear humming — Ned Flanders approaches.</p>
+        <button onclick="nedEncounter()">Speak with Ned</button>
+        <button onclick="wilburFight()">Investigate the Broken Barn</button>
+      `;
+    }
+
+    function nedEncounter() {
+      state.nedHelp++;
+      game.innerHTML = `
+        <h2>Ned Flanders</h2>
+        <p>"Howdy-ho, neighbor! Chubb's been up to no good. Stick to the light, and you'll make it."</p>
+        <button onclick="wilburFight()">Ask About Local Threats</button>
+        <button onclick="minionFight()">Continue Onward</button>
+      `;
+    }
+
+    function minionFight() {
+      state.encounters++;
+      game.innerHTML = `
+        <h2>Chubb's Minions</h2>
+        <p>A pack of grotesque hog creatures block your way!</p>
+        <button onclick="afterMinions()">Fight Them</button>
+      `;
+    }
+
+    function afterMinions() {
+      if (state.encounters > 3 && !state.wilburJoined) {
+        wilburFight();
+      } else {
+        approachCastle();
+      }
+    }
+
+    function wilburFight() {
+      game.innerHTML = `
+        <h2>Wilbur the Wild Hog</h2>
+        <p>Wilbur snarls but pauses — he might be outsmarted.</p>
+        <button onclick="wilburJoin()">Outsmart Him</button>
+        <button onclick="approachCastle()">Retreat Toward the Castle</button>
+      `;
+    }
+
+    function wilburJoin() {
+      state.wilburJoined = true;
+      game.innerHTML = `
+        <h2>Wilbur Joins You</h2>
+        <p>Impressed by your wit, Wilbur pledges loyalty.</p>
+        <button onclick="approachCastle()">Proceed</button>
+      `;
+    }
+
+    function approachCastle() {
+      game.innerHTML = `
+        <h2>The Golden Castle</h2>
+        <p>The lair of Chubb the Pig looms above. There is no turning back.</p>
+        <button onclick="finalEncounter()">Enter the Castle</button>
+      `;
+    }
+
+    function finalEncounter() {
+      // Determine ending
+      const oddsBoost = state.billyFound ? 0.8 : 0.2;
+      const chance = Math.random();
+
+      // Ending 1 — Big Pig Bank
+      if (chance < oddsBoost) {
+        ending1(); return;
+      }
+
+      // Other endings randomized
+      const end = Math.floor(Math.random() * 4) + 2;
+      switch(end) {
+        case 2: ending2(); break;
+        case 3: ending3(); break;
+        case 4: ending4(); break;
+        case 5: ending5(); break;
+      }
+    }
+
+    function ending1() {
+      game.innerHTML = `
+        <h2>Ending 1: Fortune Found</h2>
+        <p>You reach the Big Pig Bank. A massive chest opens — $10,000,000 gleams inside. Freedom at last.</p>
+        <button onclick="startMenu()">Play Again</button>
+      `;
+    }
+
+    function ending2() {
+      game.innerHTML = `
+        <h2>Ending 2: The Arena</h2>
+        <p>Chubb forces you into an MMA bout inside the golden arena. You fight bravely... but you lose.</p>
+        <button onclick="startMenu()">Play Again</button>
+      `;
+    }
+
+    function ending3() {
+      game.innerHTML = `
+        <h2>Ending 3: The Pike</h2>
+        <p>Chubb skewers you and mounts your head at the entrance to the Big Pig Lair. A grim warning to others.</p>
+        <button onclick="startMenu()">Play Again</button>
+      `;
+    }
+
+    function ending4() {
+      game.innerHTML = `
+        <h2>Ending 4: The Hill</h2>
+        <p>Chubb wraps you tightly in a blanket and rolls you down a massive hill. You bounce to your doom.</p>
+        <button onclick="startMenu()">Play Again</button>
+      `;
+    }
+
+    function ending5() {
+      game.innerHTML = `
+        <h2>Ending 5: Checkmate</h2>
+        <p>Chubb challenges you to chess. No matter your skill, he dismantles you in minutes. You lose — utterly.</p>
+        <button onclick="startMenu()">Play Again</button>
+      `;
+    }
+
+    startMenu();
+  </script>
+</body>
+</html>
